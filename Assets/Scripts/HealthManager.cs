@@ -10,6 +10,7 @@ public class HealthManager : MonoBehaviour
 
     //usable on Unity for the Image 
     [SerializeField] public Image healthBar;
+    
     public float currentHealth = 100f;  //health at 100% at the start
 
     // Update is called once per frame
@@ -25,6 +26,13 @@ public class HealthManager : MonoBehaviour
         Damage(20); //amount of damage taken
        } 
     }
+
+    // private void hurt(Collider2D collision){
+
+    //     if(collision.tag == "Enemy"){
+    //         Damage(20);
+    //     }
+    // }
 
     
     //The Damage function to reduce the current health with how much percent of their health they have left.
