@@ -21880,6 +21880,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 1646722424}
+  maxHP: 0
   currentHealth: 100
 --- !u!4 &358336834
 Transform:
@@ -37158,7 +37159,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f88f2b99c7fe3af428d3e24bbefa7f5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBar: {fileID: 0}
+  healthBar: {fileID: 1646722424}
+  maxHP: 0
   currentHealth: 100
 --- !u!1 &649171152
 GameObject:
@@ -39671,7 +39673,7 @@ GameObject:
   - component: {fileID: 695860287}
   m_Layer: 0
   m_Name: damageObjects
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
