@@ -14,4 +14,8 @@ public class MainMenu : MonoBehaviour
     public void Quit(){
         Application.Quit(); //command to exit the game
     }
+
+    public void Settings(){
+        //opens the settings
+    }
 }

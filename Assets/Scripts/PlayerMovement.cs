@@ -80,14 +80,17 @@ public class PlayerMovement : MonoBehaviour
         }
         //wall jump mechanic, changing direction the player is facing
         else if(onWall() && !isGrounded()){
+            //enable the WallSlide animation
+            
 
             if(horizontalInput == 0){
                 body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x)*4, 0);
                 transform.localScale = new Vector3(-Mathf.Sign(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                //animate.SetTrigger("WallSlide"); //for wallslide animation (do later)
             }
             else            
                 body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x)*1, 2); //multiply by gravity and force
-
+                //animate.SetTrigger("jump");
             wallJumpCooldown = 0;
             
         }
