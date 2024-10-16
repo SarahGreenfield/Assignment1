@@ -55,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
 
             //When the player is on the wall, but not on the ground the gravity and velocity will be set to 0 
             if(onWall() && !isGrounded()){
-                body.gravityScale = 0.1f;
+                body.gravityScale = 0.7f;
                 body.velocity = Vector2.zero;
             }
             else

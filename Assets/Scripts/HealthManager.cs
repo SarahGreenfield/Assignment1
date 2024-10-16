@@ -24,7 +24,8 @@ public class HealthManager : MonoBehaviour
         healthBar.fillAmount = Mathf.Clamp(currentHealth / maxHP, 0, 1); //to ensure the health doesn't overflow
         //if the player's health is zero (or less than zero for any overkill) The scene reloads using SceneManager and the build setting index for that scene
         if (currentHealth <=0 ){
-            SceneManager.LoadSceneAsync(1);
+            //SceneManager.LoadSceneAsync(1);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
         //As of now, the only way to actually take damage is to press the ENTER button, I have it here to show that it is up, just not fully enabled with collisions with other objects.
