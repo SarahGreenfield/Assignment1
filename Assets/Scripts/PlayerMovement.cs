@@ -127,6 +127,21 @@ public class PlayerMovement : MonoBehaviour
         return raycastHit.collider != null;  
     }
 
+    // #region Save and Load
 
+    // public void Save(ref PlayerSaveData data){
+    //     data.Position = transform.position;
+    // }
+
+    // public void Load(PlayerSaveData data){
+    //     transform.position = data.Position;
+    // }
+
+    // #endregion
 
 }
+//https://www.youtube.com/watch?v=1mf730eb5Wo for the save method
+// [System.Serializable]
+// public struct PlayerSaveData{
+//     public Vector3 Position;
+// }
