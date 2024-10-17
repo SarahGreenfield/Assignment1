@@ -24,7 +24,7 @@ public class PauseFeature : MonoBehaviour
 
     void Update(){
         //Check for Excape key press
-        if(Input.GetKeyDown(KeyCode.Escape)){
+        if(Input.GetKeyDown(KeyCode.Escape) ){
             //resumes game if game is already paused
             if(GameIsPaused){
                 Resume();
@@ -60,8 +60,24 @@ public class PauseFeature : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
-        public void OpenSettings(){
-            Debug.Log("Settings opened");
+    public void OpenSettings(){
+        Debug.Log("Settings opened");
+    }
+
+    //New Part
+    public void SaveGame()
+    {
+        if (SaveLoadManager.Instance != null)
+        {
+            SaveLoadManager.Instance.Save();
+            Debug.Log("Game saved");
         }
+        else
+        {
+            Debug.LogError("SaveLoadManager not found!");
+        }
+    }
+
+
 
 }

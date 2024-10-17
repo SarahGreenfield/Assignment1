@@ -43,5 +43,17 @@ public class HealthManager : MonoBehaviour
         }
     }
 
+    //New part
+    public float GetHealth()
+    {
+        return currentHealth;
+    }
+
+    // New part
+    public void SetHealth(float health)
+    {
+        currentHealth = Mathf.Clamp(health, 0, maxHP);
+        healthBar.fillAmount = currentHealth / maxHP;
+    }
 
 }
