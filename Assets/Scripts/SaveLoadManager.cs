@@ -1,135 +1,123 @@
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-
 public class SaveLoadManager : MonoBehaviour
 {
- public static SaveLoadManager Instance { get; private set; }
+    public static SaveLoadManager Instance { get; private set; }
+    private string savePath;
 
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            savePath = Path.Combine(Application.persistentDataPath, "savefile.json");
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
- private const string SceneIndexKey = "LastPlayedSceneIndex";
- private const string PlayerPositionXKey = "PlayerPositionX";
- private const string PlayerPositionYKey = "PlayerPositionY";
- private const string PlayerPositionZKey = "PlayerPositionZ";
- private const string PlayerHealthKey = "PlayerHealth";
+    // Method to save data
+    public void Save()
+    {
+        PlayerMovement player = FindObjectOfType<PlayerMovement>();
+        HealthManager healthManager = FindObjectOfType<HealthManager>();
 
+        if (player != null && healthManager != null)
+        {
+            SaveData data = new SaveData
+            {
+                playerPositionX = player.transform.position.x,
+                playerPositionY = player.transform.position.y,
+                playerPositionZ = player.transform.position.z,
+                currentScene = SceneManager.GetActiveScene().name,
+                playerHealth = healthManager.GetHealth(),
+                volume = AudioListener.volume
+            };
 
- private void Awake()
- {
-     if (Instance == null)
-     {
-         Instance = this;
-         DontDestroyOnLoad(gameObject);
-     }
-     else
-     {
-         Destroy(gameObject);
-     }
- }
+            string json = JsonUtility.ToJson(data);
+            File.WriteAllText(savePath, json);
+            Debug.Log("Game Saved!");
+        }
+        else
+        {
+            Debug.LogWarning("Player or HealthManager not found. Unable to save game.");
+        }
+    }
 
-[ContextMenu("ActionName")]
-public void PrintPrefs()
+    // Method to load data
+    public void Load()
+    {
+        if (File.Exists(savePath))
+        {
+            string json = File.ReadAllText(savePath);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+            // Load the saved scene
+            StartCoroutine(LoadSceneAndSetData(data));
+        }
+        else
+        {
+            Debug.LogWarning("No save file found!");
+        }
+    }
+
+    // Coroutine to load scene and set data
+    private IEnumerator LoadSceneAndSetData(SaveData data)
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(data.currentScene);
+
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+
+        // Scene is loaded, now set the data
+        yield return new WaitForEndOfFrame();
+
+        PlayerMovement player = FindObjectOfType<PlayerMovement>();
+        HealthManager healthManager = FindObjectOfType<HealthManager>();
+
+        if (player != null)
+        {
+            player.transform.position = new Vector3(data.playerPositionX, data.playerPositionY, data.playerPositionZ);
+        }
+
+        if (healthManager != null)
+        {
+            healthManager.SetHealth(data.playerHealth);
+        }
+
+        AudioListener.volume = data.volume;
+
+        Debug.Log("Game Loaded!");
+    }
+
+    // Optional: Method to clear saved data
+    public void ClearSavedData()
+    {
+        if (File.Exists(savePath))
+        {
+            File.Delete(savePath);
+            Debug.Log("Saved data cleared.");
+        }
+    }
+}
+
+[System.Serializable]
+public class SaveData
 {
-    //Debug All player pref values
+    public float playerPositionX;
+    public float playerPositionY;
+    public float playerPositionZ;
+    public string currentScene;
+    public float playerHealth;
+    public float volume;
 }
- public void Save()
- {
-     // Save current scene index
-     PlayerPrefs.SetInt(SceneIndexKey, SceneManager.GetActiveScene().buildIndex);
-
-
-     // Save player position
-     PlayerMovement player = FindObjectOfType<PlayerMovement>();
-     if (player != null)
-     {
-         PlayerPrefs.SetFloat(PlayerPositionXKey, player.transform.position.x);
-         PlayerPrefs.SetFloat(PlayerPositionYKey, player.transform.position.y);
-         PlayerPrefs.SetFloat(PlayerPositionZKey, player.transform.position.z);
-     }
-
-
-     // Save player health
-     HealthManager healthManager = FindObjectOfType<HealthManager>();
-     if (healthManager != null)
-     {
-         PlayerPrefs.SetFloat(PlayerHealthKey, healthManager.GetHealth());
-     }
-
-
-     // Save all modifications
-     PlayerPrefs.Save();
-
-
-     Debug.Log("Game saved successfully.");
- }
-
-
-  public void Load()
- {
-     if (PlayerPrefs.HasKey(SceneIndexKey))
-     {
-         int sceneToLoad = PlayerPrefs.GetInt(SceneIndexKey);
-           StartCoroutine(LoadSceneAndSetData(sceneToLoad));
-     }
-     else
-     {
-         Debug.LogWarning("No saved game found!");
-     }
- }
-
-
-   private IEnumerator LoadSceneAndSetData(int sceneIndex)
- {
-       AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneIndex);
-
-
-       while (!asyncLoad.isDone)
-     {
-           yield return null;
-     }
-
-
-       // Scene is fully loaded, now set the data
-       SetPlayerData();
-     }
-
-
-   private void SetPlayerData()
-     {
-       // Set player position
-       PlayerMovement player = FindObjectOfType<PlayerMovement>();
-       if (player != null && PlayerPrefs.HasKey(PlayerPositionXKey))
-       {
-           float x = PlayerPrefs.GetFloat(PlayerPositionXKey);
-           float y = PlayerPrefs.GetFloat(PlayerPositionYKey);
-           float z = PlayerPrefs.GetFloat(PlayerPositionZKey);
-           player.transform.position = new Vector3(x, y, z);
-     }
-
-
-       // Set player health
-       HealthManager healthManager = FindObjectOfType<HealthManager>();
-       if (healthManager != null && PlayerPrefs.HasKey(PlayerHealthKey))
- {
-           float health = PlayerPrefs.GetFloat(PlayerHealthKey);
-           healthManager.SetHealth(health);
-}
-
-
-       Debug.Log("Game loaded successfully.");
-}
-
-
-   // Optional: Method to clear all saved data
-   public void ClearSavedData()
-   {
-       PlayerPrefs.DeleteAll();
-       Debug.Log("All saved game data cleared.");
-   }
-}
-
-
-
 
 
